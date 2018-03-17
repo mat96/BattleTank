@@ -27,47 +27,47 @@ void UTankAimingComponent::AimAt(FVector OutHitLocation, float LaunchSpeed)
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
 
 	// Calculate the OutLaunchVelocity,  UGamePlayStatics is added because Suggest Projectile Velocity is Static
-	if (UGameplayStatics::SuggestProjectileVelocity(
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(
 		this,
 		OutLaunchVelocity,
 		StartLocation,
-		OutHitLocation,//End Location
+		OutHitLocation, //End Location
 		LaunchSpeed,
-		false,//bHighArc
-		0.0,// Collision Radius
-		0, // OverrideGravityZ
 		ESuggestProjVelocityTraceOption::DoNotTrace
 
-		))
+	);
+	
+	if (bHaveAimSolution)
 	{
-
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
-
-		UE_LOG(LogTemp, Warning, TEXT("Aiming at %s"), *AimDirection.ToString())
+		
+		MoveBarrelTowards(AimDirection);
+		
 	}
-	else
-	{
-		// does nothing 
-	}
-}
-
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
 	
+		// Then do nothing
 	
 }
 
-
-
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	// Work-out difference between barrel relation, and aim direction
+	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
+	auto AimAsRotator = AimDirection.Rotation();
 
-	// ...
+	UE_LOG(LogTemp, Warning, TEXT("AimAsRotator : %s"), *AimAsRotator.ToString())
+
+
+	//move the barrel the right amount of time
+
+	// Move barrel according to the camera 
+	
+	// Log out Barrel rotations.
+
+
+
+
+
 }
+
 
