@@ -12,7 +12,7 @@
 
 //Foward Declaration
 class UTankBarrel; 
-
+class UTankTurret;
 
 // Holds barrel's properties and elevare method
 
@@ -25,8 +25,7 @@ public:
 	// Sets default values for this component's properties
 	UTankAimingComponent();
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
-
-	//TODO add SetTurretReference
+	void SetTurretReference(UTankTurret* TurretToSet);
 
 
 	
@@ -39,8 +38,8 @@ protected:
 private:
 
 	void MoveBarrelTowards(FVector AimDirection);
-
 	UTankBarrel* Barrel = nullptr;
+	UTankTurret* Turret = nullptr;
 		
 	
 };

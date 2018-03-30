@@ -2,6 +2,8 @@
 
 #include "TankAimingComponent.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
+
 
 
 
@@ -10,20 +12,29 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true; //should this really tick
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
 
-void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)
+void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
+
 	Barrel = BarrelToSet;
+
+}
+void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
 
 }
 
 
+
+
 void UTankAimingComponent::AimAt(FVector OutHitLocation, float LaunchSpeed)
 {
+	
 	if (!Barrel) { return; }
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
@@ -35,8 +46,11 @@ void UTankAimingComponent::AimAt(FVector OutHitLocation, float LaunchSpeed)
 		StartLocation,
 		OutHitLocation, //End Location
 		LaunchSpeed,
-		ESuggestProjVelocityTraceOption::DoNotTrace
-
+		false,
+		0.0,
+		0.0,
+		ESuggestProjVelocityTraceOption::DoNotTrace //Parameter must be present to prevent bug
+	
 	);
 	
 	if (bHaveAimSolution)
@@ -46,14 +60,12 @@ void UTankAimingComponent::AimAt(FVector OutHitLocation, float LaunchSpeed)
 		MoveBarrelTowards(AimDirection);
 		auto Time = GetWorld()->GetTimeSeconds();
 
-		UE_LOG(LogTemp, Warning, TEXT(" %f: Aim solution found"), Time);
 	}
 	else
 	{
 		auto Time = GetWorld()->GetTimeSeconds();
 
 
-		UE_LOG(LogTemp, Warning, TEXT(" %f: No aim solution found"), Time);
 	}
 	
 		// Then do nothing
@@ -69,12 +81,12 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 	
 
-		Barrel->Elevate(5); //TODO remove magic number
-
-
+		Barrel->Elevate(DeltaRotator.Pitch); 
+		Turret->TurnTurret(DeltaRotator.Yaw);
 
 
 
 }
+
 
 
