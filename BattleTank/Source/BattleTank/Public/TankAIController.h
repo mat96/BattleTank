@@ -19,10 +19,7 @@ public:
 		virtual void BeginPlay() override;
 
 private:
-	ATank* GetAIController() const;
-	ATank* GetPlayerTank() const;
-	ATank* GetControlledTank() const;
-	
-	
+	//How close can the AI can get to the player
+	float AcceptanceRadius = 3000;
 	
 };
